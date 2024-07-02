@@ -1,9 +1,6 @@
 # Car_rental_backend_assingment
 
-Sure! Below is the updated README file that includes user authentication and car booking service details:
-
-Car Rental Management System
-Overview
+#Overview
 The Car Rental Management System is an application for managing car rental services. It provides functionalities for adding, updating, returning, and deleting car records, as well as handling user bookings and authentication.
 
 Table of Contents
