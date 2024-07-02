@@ -1,0 +1,12 @@
+export type TCar = {
+  name: string;
+  description: string;
+  color: string;
+  isElectric: boolean;
+  features: string[];
+  isDelete: boolean;
+  pricePerHour: number;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
