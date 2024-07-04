@@ -5,7 +5,7 @@ import config from "../../config";
 
 const userSchema = new Schema<TUser, UserModel>(
   {
-    name: { type: String, unique: true, required: [true, "Name is required"] },
+    name: { type: String, required: [true, "Name is required"] },
     password: { type: String, required: [true, "Password is required"] },
     email: {
       type: String,

@@ -44,7 +44,7 @@ const createSingIn = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     });
     return {
         user,
-        accessToken: `Bearer ${accessToken}`,
+        accessToken: accessToken,
     };
 });
 exports.AuthService = {

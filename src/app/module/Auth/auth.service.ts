@@ -39,7 +39,7 @@ const createSingIn = async (payload: TSingInUser) => {
 
   return {
     user,
-    accessToken: `Bearer ${accessToken}`,
+    accessToken: accessToken,
   };
 };
 
