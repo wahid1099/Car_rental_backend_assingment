@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.put("/return", Auth(USER_ROLE.admin), CarControllers.returnCar);
 
-router.get("/", Auth(USER_ROLE.admin), CarControllers.getAllCars);
-router.get("/:id", Auth(USER_ROLE.admin), CarControllers.getSingleCar);
+router.get("/", CarControllers.getAllCars);
+router.get("/:id", CarControllers.getSingleCar);
 
 router.post(
   "/",
