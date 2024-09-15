@@ -2,12 +2,16 @@ import { Model } from "mongoose";
 import { USER_ROLE } from "./user.constant";
 
 export type TUser = {
+  _id: string;
   name: string;
   email: string;
   role: "user" | "admin";
   password: string;
   phone: string;
-  address: string;
+
+  image?: string;
+  isDeleted: boolean;
+  address?: string;
 };
 
 export interface UserModel extends Model<TUser> {

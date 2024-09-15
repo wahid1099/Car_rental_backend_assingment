@@ -1,7 +1,8 @@
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthService } from "./auth.service";
-
+import httpStatus from "http-status";
+import config from "../../config";
 const signUp = catchAsync(async (req, res) => {
   const userData = req.body;
   const newUser = await AuthService.createSingUp(userData);
