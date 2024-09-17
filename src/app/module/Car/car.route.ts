@@ -11,22 +11,28 @@ import { USER_ROLE } from "../User/user.constant";
 
 const router = express.Router();
 
-router.put("/return", Auth(USER_ROLE.admin), CarControllers.returnCar);
-
+//get methods
 router.get("/", CarControllers.getAllCars);
 router.get("/:id", CarControllers.getSingleCar);
-
+router.get("/search-cars", CarControllers.searchCars);
+//post methods
 router.post(
   "/",
   Auth(USER_ROLE.admin),
   validateRequest(CarValidation.carSchemaValidation),
   CarControllers.createCar
 );
+//put methods
 
 router.put(
   "/:id",
   validateRequest(CarValidation.carSchemaValidation),
   CarControllers.updateCar
+);
+router.put(
+  "/return-car/:bookingId",
+  Auth(USER_ROLE.admin),
+  CarControllers.returnCar
 );
 
 router.delete("/:id", Auth(USER_ROLE.admin), CarControllers.delteCar);

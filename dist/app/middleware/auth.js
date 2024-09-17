@@ -17,7 +17,7 @@ const AppError_1 = __importDefault(require("../error/AppError"));
 const http_status_1 = __importDefault(require("http-status"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
-const Auth = (requiredRole) => {
+const Auth = (...requiredRole) => {
     return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
@@ -29,8 +29,12 @@ const Auth = (requiredRole) => {
                 throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You are not Authorized!!");
             }
             const user = decoded;
-            if (requiredRole && user.role !== requiredRole) {
-                throw new AppError_1.default(http_status_1.default.FORBIDDEN, "You have no access to this route!!");
+            if (requiredRole && !requiredRole.includes(user.role)) {
+                res.status(http_status_1.default.UNAUTHORIZED).json({
+                    success: false,
+                    statusCode: http_status_1.default.UNAUTHORIZED,
+                    message: "You have no access to this route!!",
+                });
             }
             req.user = user;
             next();

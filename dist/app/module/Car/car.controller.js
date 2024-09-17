@@ -27,7 +27,8 @@ const createCar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     });
 }));
 const getAllCars = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield car_service_1.CarServices.getAllCarsFromDb();
+    const { name, carType, location, price } = req.query;
+    const result = yield car_service_1.CarServices.getAllCarsFromDb(name, carType, location, parseInt(price));
     result.length < 1
         ? (0, sendResponse_1.default)(res, {
             success: true,
@@ -74,14 +75,26 @@ const delteCar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 
 }));
 const returnCar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { bookingId, endTime } = req.body;
-    console.log("hi");
-    console.log(bookingId);
-    console.log(endTime);
     const result = yield car_service_1.CarServices.returnCarIntoDb(bookingId, endTime);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
         message: "Car returned Successfully!!",
+        data: result,
+    });
+}));
+// search car
+const searchCars = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { features, seats, carType } = req.query;
+    const result = yield car_service_1.CarServices.searchCarsFromDB({
+        features,
+        carType,
+        seats,
+    });
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Cars searched successfully!",
         data: result,
     });
 }));
@@ -92,4 +105,5 @@ exports.CarControllers = {
     updateCar,
     delteCar,
     returnCar,
+    searchCars,
 };
