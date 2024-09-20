@@ -15,7 +15,7 @@ const userSchema = new Schema<TUser, UserModel>(
     phone: { type: String, required: [true, "Phone number is required"] },
     role: { type: String, enum: ["user", "admin"] },
 
-    address: { type: String, required: [true, "Adress is required"] },
+    // address: { type: String, required: [true, "Adress is required"] },
   },
   { timestamps: true }
 );

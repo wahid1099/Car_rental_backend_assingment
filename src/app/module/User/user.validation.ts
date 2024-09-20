@@ -8,7 +8,7 @@ const userValidationSchema = z.object({
     email: z.string().email({ message: "Invalid Email address" }),
     phone: z.string().min(1, { message: "Phone number is required" }),
     role: z.enum(["user", "admin"]),
-    address: z.string(),
+    // address: z.string(),
   }),
 });
 

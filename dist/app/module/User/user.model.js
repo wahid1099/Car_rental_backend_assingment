@@ -26,7 +26,7 @@ const userSchema = new mongoose_1.Schema({
     },
     phone: { type: String, required: [true, "Phone number is required"] },
     role: { type: String, enum: ["user", "admin"] },
-    address: { type: String, required: [true, "Adress is required"] },
+    // address: { type: String, required: [true, "Adress is required"] },
 }, { timestamps: true });
 userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {

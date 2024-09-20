@@ -11,7 +11,7 @@ export type TUser = {
 
   image?: string;
   isDeleted: boolean;
-  address?: string;
+  // address?: string;
 };
 
 export interface UserModel extends Model<TUser> {
