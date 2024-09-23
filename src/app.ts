@@ -15,6 +15,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://car-rental-backend-assingment.vercel.app",
+      "https://car-rental-bd-frontend-c8rk.vercel.app",
     ],
     credentials: true,
   })
