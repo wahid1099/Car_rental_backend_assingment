@@ -42,7 +42,7 @@ const createSingIn = async (payload: TSingInUser) => {
   };
 
   const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
-    expiresIn: "10m",
+    expiresIn: "10d",
   });
 
   const refreshToken = jwt.sign(
