@@ -7,6 +7,11 @@ import { USER_ROLE } from "../User/user.constant";
 
 const router = express.Router();
 
+router.patch(
+  "/update-booking/:bookingId",
+  Auth(USER_ROLE.user),
+  BookingControllers.updateBooking
+);
 router.post(
   "/",
   Auth(USER_ROLE.user),
@@ -14,12 +19,26 @@ router.post(
   BookingControllers.createBooking
 );
 
+router.delete(
+  "/delete-booking/:bookingId",
+  Auth(USER_ROLE.user, USER_ROLE.admin),
+  BookingControllers.deletedBooking
+);
 router.get("/", Auth(USER_ROLE.admin), BookingControllers.getAllBookings);
-
 router.get(
   "/my-bookings",
   Auth(USER_ROLE.user),
   BookingControllers.getMyBookings
+);
+router.patch(
+  "/update-booking-status/:bookingId",
+  Auth(USER_ROLE.admin),
+  BookingControllers.updateBookingStatusFromDB
+);
+router.post(
+  "/complete-booking/:bookingId",
+  Auth(USER_ROLE.user),
+  BookingControllers.completeBookingFromDB
 );
 
 export const BookingRoutes = router;

@@ -16,6 +16,7 @@ const createSingUp = async (userData: TUser) => {
   }
 
   const newUser = new User(userData);
+
   const result = await newUser.save();
   return result;
 };

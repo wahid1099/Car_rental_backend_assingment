@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import config from "../../config";
 const signUp = catchAsync(async (req, res) => {
   const userData = req.body;
+
   const newUser = await AuthService.createSingUp(userData);
 
   sendResponse(res, {
