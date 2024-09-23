@@ -46,7 +46,7 @@ const createSingIn = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         image: user.image,
     };
     const accessToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_secret, {
-        expiresIn: "10m",
+        expiresIn: "10d",
     });
     const refreshToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_refresh_secret, { expiresIn: "10d" });
     return {

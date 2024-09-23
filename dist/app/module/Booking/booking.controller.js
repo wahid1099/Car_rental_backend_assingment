@@ -18,51 +18,101 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const booking_service_1 = require("./booking.service");
 const createBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newBooking = yield booking_service_1.BookingServices.BookingcarFromDB(req.body, req.user);
+    const booking = yield booking_service_1.BookingServices.BookingCarFromDB(req.body, req.user);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
         message: "Car booked successfully",
-        data: newBooking,
+        data: booking,
     });
 }));
 const getAllBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
-    const bookings = yield booking_service_1.BookingServices.getAllBookingsFromDB(query);
-    bookings.length < 1
+    const result = yield booking_service_1.BookingServices.getAllBookingsFromDB(query);
+    result.length < 1
         ? (0, sendResponse_1.default)(res, {
             success: true,
             statusCode: http_status_1.default.NOT_FOUND,
-            message: "No bookings found",
-            data: null,
+            message: "Data No Found",
+            data: result,
         })
         : (0, sendResponse_1.default)(res, {
             success: true,
             statusCode: 200,
             message: "Bookings retrieved successfully",
-            data: bookings,
+            data: result,
         });
 }));
 const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const useremail = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userEmail;
-    const result = yield booking_service_1.BookingServices.getMyBookingsFromDB(useremail);
+    const userEmail = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userEmail;
+    // Call the service method to get bookings by user email
+    const result = yield booking_service_1.BookingServices.getMyBookingsFromDB(userEmail);
     result.length < 1
         ? (0, sendResponse_1.default)(res, {
             success: true,
             statusCode: http_status_1.default.NOT_FOUND,
-            message: "No Data found",
-            data: req,
+            message: "Data No Found",
+            data: result,
         })
         : (0, sendResponse_1.default)(res, {
             success: true,
             statusCode: 200,
-            message: "My bookings retrieved successfully",
+            message: "My Bookings retrieved successfully",
             data: result,
         });
+}));
+const updateBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const data = req.body;
+    const { bookingId } = req.params;
+    const result = yield booking_service_1.BookingServices.updateBookeingFromDB(user, data, bookingId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Booking updated successfully!",
+        data: result,
+    });
+}));
+const deletedBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { bookingId } = req.params;
+    const result = yield booking_service_1.BookingServices.deleteBookingFromDB(user, bookingId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Booking deleted successfully!",
+        data: result,
+    });
+}));
+const updateBookingStatusFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { bookingId } = req.params;
+    const result = yield booking_service_1.BookingServices.updateBookingStatus(user, bookingId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Booking status updated successfully!",
+        data: result,
+    });
+}));
+const completeBookingFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { bookingId } = req.params;
+    const result = yield booking_service_1.BookingServices.completedBooking(user, bookingId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Booking completed successfully!",
+        data: result,
+    });
 }));
 exports.BookingControllers = {
     createBooking,
     getAllBookings,
     getMyBookings,
+    updateBooking,
+    deletedBooking,
+    updateBookingStatusFromDB,
+    completeBookingFromDB,
 };

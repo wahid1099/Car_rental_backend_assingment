@@ -9,6 +9,7 @@ const userValidationSchema = zod_1.z.object({
         email: zod_1.z.string().email({ message: "Invalid Email address" }),
         phone: zod_1.z.string().min(1, { message: "Phone number is required" }),
         role: zod_1.z.enum(["user", "admin"]),
+        image: zod_1.z.string().min(1, { message: "Image is required" }).optional(),
         // address: z.string(),
     }),
 });
