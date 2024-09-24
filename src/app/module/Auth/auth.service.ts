@@ -121,16 +121,19 @@ const getMyId = async (userId: string) => {
 };
 
 const deleteUserIntoDb = async (userId: string) => {
-  const user = await User.findOne({ _id: userId });
+  const user = await User.findById(userId);
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "User Not found!!");
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
-  const reuslt = await User.findByIdAndUpdate(
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User is already deleted");
+  }
+  const result = await User.findByIdAndUpdate(
     userId,
     { isDeleted: true },
     { new: true }
   );
-  return reuslt;
+  return result;
 };
 
 const toggleAdminRoleInDb = async (userId: string) => {
