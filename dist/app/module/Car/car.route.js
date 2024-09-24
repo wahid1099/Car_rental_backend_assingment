@@ -12,9 +12,9 @@ const auth_1 = __importDefault(require("../../middleware/auth"));
 const user_constant_1 = require("../User/user.constant");
 const router = express_1.default.Router();
 //get methods
-router.get("/", car_controller_1.CarControllers.getAllCars);
-router.get("/:id", car_controller_1.CarControllers.getSingleCar);
 router.get("/search-cars", car_controller_1.CarControllers.searchCars);
+router.get("/:id", car_controller_1.CarControllers.getSingleCar);
+router.get("/", car_controller_1.CarControllers.getAllCars);
 //post methods
 router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), (0, validateRequest_1.default)(car_validation_1.CarValidation.carSchemaValidation), car_controller_1.CarControllers.createCar);
 //put methods

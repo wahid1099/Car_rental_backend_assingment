@@ -11,11 +11,18 @@ const booking_controller_1 = require("./booking.controller");
 const auth_1 = __importDefault(require("../../middleware/auth"));
 const user_constant_1 = require("../User/user.constant");
 const router = express_1.default.Router();
-router.patch("/update-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.BookingControllers.updateBooking);
-router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.user), (0, validateRequest_1.default)(booking_validation_1.BookingValidation.BookingValidationSchema), booking_controller_1.BookingControllers.createBooking);
-router.delete("/delete-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user, user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.deletedBooking);
-router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.getAllBookings);
+// Specific user routes should come before general ones.
 router.get("/my-bookings", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.BookingControllers.getMyBookings);
-router.patch("/update-booking-status/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.updateBookingStatusFromDB);
+// Booking creation route
+router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.user), (0, validateRequest_1.default)(booking_validation_1.BookingValidation.BookingValidationSchema), booking_controller_1.BookingControllers.createBooking);
+// Booking completion route
 router.post("/complete-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.BookingControllers.completeBookingFromDB);
+// Update booking route
+router.patch("/update-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.BookingControllers.updateBooking);
+// Update booking status route (Admin)
+router.patch("/update-booking-status/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.updateBookingStatusFromDB);
+// Delete booking route
+router.delete("/delete-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user, user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.deletedBooking);
+// Get all bookings (Admin)
+router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.getAllBookings);
 exports.BookingRoutes = router;

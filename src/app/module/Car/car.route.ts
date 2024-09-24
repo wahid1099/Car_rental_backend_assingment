@@ -12,9 +12,11 @@ import { USER_ROLE } from "../User/user.constant";
 const router = express.Router();
 
 //get methods
-router.get("/", CarControllers.getAllCars);
-router.get("/:id", CarControllers.getSingleCar);
 router.get("/search-cars", CarControllers.searchCars);
+router.get("/:id", CarControllers.getSingleCar);
+
+router.get("/", CarControllers.getAllCars);
+
 //post methods
 router.post(
   "/",
