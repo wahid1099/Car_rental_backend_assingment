@@ -41,7 +41,11 @@ router.put(
   AuthController.updateUserFromDb
 );
 
-router.delete("/:userId", Auth(USER_ROLE.admin), AuthController.deleteFromDb);
+router.delete(
+  "/delete-user/:userId",
+  Auth(USER_ROLE.admin),
+  AuthController.deleteFromDb
+);
 
 router.patch(
   "/update-role/:userId",

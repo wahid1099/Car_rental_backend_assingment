@@ -105,12 +105,15 @@ const getMyId = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     return user;
 });
 const deleteUserIntoDb = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findOne({ _id: userId });
+    const user = yield user_model_1.User.findById(userId);
     if (!user) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User Not found!!");
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not found");
     }
-    const reuslt = yield user_model_1.User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
-    return reuslt;
+    if (user.isDeleted) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "User is already deleted");
+    }
+    const result = yield user_model_1.User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true });
+    return result;
 });
 const toggleAdminRoleInDb = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findById(userId);

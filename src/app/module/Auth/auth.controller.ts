@@ -82,6 +82,7 @@ const getMefromDb = catchAsync(async (req, res) => {
 
 const deleteFromDb = catchAsync(async (req, res) => {
   const { userId } = req.user;
+  // console.log(userId);
   const result = await AuthService.deleteUserIntoDb(userId);
   sendResponse(res, {
     success: true,
