@@ -25,4 +25,5 @@ router.patch("/update-booking-status/:bookingId", (0, auth_1.default)(user_const
 router.delete("/delete-booking/:bookingId", (0, auth_1.default)(user_constant_1.USER_ROLE.user, user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.deletedBooking);
 // Get all bookings (Admin)
 router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingControllers.getAllBookings);
+router.get("/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.BookingControllers.getSingleBookingDetails);
 exports.BookingRoutes = router;

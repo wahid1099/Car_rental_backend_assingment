@@ -62,6 +62,23 @@ const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
             data: result,
         });
 }));
+const getSingleBookingDetails = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield booking_service_1.BookingServices.getsingleBookingsFromDB(id);
+    result.length < 1
+        ? (0, sendResponse_1.default)(res, {
+            success: true,
+            statusCode: http_status_1.default.NOT_FOUND,
+            message: "Data No Found",
+            data: result,
+        })
+        : (0, sendResponse_1.default)(res, {
+            success: true,
+            statusCode: 200,
+            message: " Bookings retrieved successfully",
+            data: result,
+        });
+}));
 const updateBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const data = req.body;
@@ -115,4 +132,5 @@ exports.BookingControllers = {
     deletedBooking,
     updateBookingStatusFromDB,
     completeBookingFromDB,
+    getSingleBookingDetails,
 };

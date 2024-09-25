@@ -82,6 +82,12 @@ const getMyBookingsFromDB = (email) => __awaiter(void 0, void 0, void 0, functio
         .populate("car");
     return bookings;
 });
+const getsingleBookingsFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookings = yield booking_model_1.Booking.find({ _id: id })
+        .populate("user")
+        .populate("car");
+    return bookings;
+});
 const updateBookeingFromDB = (user, payload, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
     // check the user is exists or not
     const userData = yield user_model_1.User.findOne({ email: user === null || user === void 0 ? void 0 : user.userEmail });
@@ -202,4 +208,5 @@ exports.BookingServices = {
     deleteBookingFromDB,
     updateBookingStatus,
     completedBooking,
+    getsingleBookingsFromDB,
 };

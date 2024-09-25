@@ -86,6 +86,14 @@ const getMyBookingsFromDB = async (email: string) => {
 
   return bookings;
 };
+
+const getsingleBookingsFromDB = async (id: string) => {
+  const bookings = await Booking.find({ _id: id })
+    .populate("user")
+    .populate("car");
+
+  return bookings;
+};
 const updateBookeingFromDB = async (
   user: JwtPayload,
   payload: Record<string, unknown>,
@@ -246,4 +254,5 @@ export const BookingServices = {
   deleteBookingFromDB,
   updateBookingStatus,
   completedBooking,
+  getsingleBookingsFromDB,
 };
