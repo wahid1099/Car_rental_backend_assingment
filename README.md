@@ -76,6 +76,10 @@ Car Rental Reservation is your go-to application for discovering and booking a w
 2. Add necessary configuration variables. Example:
 
    ```
+
+
+
+   
    # Backend .env
    PORT=3000
    DB_URL=mongodb://localhost:27017/car_rental
