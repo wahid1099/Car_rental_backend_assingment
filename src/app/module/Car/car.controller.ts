@@ -76,7 +76,7 @@ const delteCar = catchAsync(async (req, res) => {
 });
 
 const returnCar = catchAsync(async (req, res) => {
-  const { bookingId } = req.body;
+  const bookingId = req.params.bookingId;
 
   const result = await CarServices.returnCarIntoDb(bookingId);
 
