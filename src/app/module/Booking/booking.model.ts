@@ -40,14 +40,18 @@ const bookingSchema = new Schema<TBooking>(
   }
 );
 
-bookingSchema.pre("find", function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
+bookingSchema.pre("find", function () {
+  // Modify the query to exclude deleted bookings
+  this.where({ isDeleted: { $ne: true } });
 });
 
-bookingSchema.post("findOne", function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
+bookingSchema.post("findOne", function (doc) {
+  // Log the found booking
+  if (doc) {
+    console.log("Found booking:", doc);
+  } else {
+    console.log("No booking found or it was deleted.");
+  }
 });
 
 export const Booking = model<TBooking>("Booking", bookingSchema);

@@ -17,10 +17,12 @@ const BookingCarFromDB = async (
   if (!userData) {
     throw new AppError(httpStatus.NOT_FOUND, " User not found!!");
   }
-  // payload.car = payload.carId;
+  payload.car = payload.carId;
   payload.user = userData._id;
+  // console.log(payload?.carId);
 
-  const carData = await Car.findById(payload?.car);
+  const carData = await Car.findById(payload?.carId);
+  // console.log(carData);
 
   // check if the car is exists
   if (!carData) {
@@ -127,17 +129,13 @@ const deleteBookingFromDB = async (user: JwtPayload, bookingId: string) => {
   try {
     session.startTransaction();
 
-    // Check if the user exists
-    const userData = await User.findOne({ email: user?.userEmail });
-    if (!userData) {
-      throw new AppError(httpStatus.NOT_FOUND, "User not found!");
-    }
-
-    const isCarBooked = await Booking.findById(bookingId);
+    // If admin, no need to check user existence
+    const isCarBooked = await Booking.findById(bookingId).session(session);
 
     if (!isCarBooked) {
       throw new AppError(httpStatus.NOT_FOUND, "Booking not found!");
     }
+
     // Check the booking status before deletion
     if (isCarBooked.status === "ongoing") {
       throw new AppError(
@@ -145,7 +143,8 @@ const deleteBookingFromDB = async (user: JwtPayload, bookingId: string) => {
         "You can't delete the booking because it is ongoing."
       );
     }
-    // Only allow deletion if the booking status is pending
+
+    // Only allow deletion if the booking status is pending or completed
     if (
       isCarBooked.status === "pending" ||
       isCarBooked.status === "completed"
@@ -164,19 +163,23 @@ const deleteBookingFromDB = async (user: JwtPayload, bookingId: string) => {
       );
 
       await session.commitTransaction();
-      await session.endSession();
-
-      return deleteBooking;
+      return {
+        success: true,
+        message: "Booking deleted successfully!",
+        booking: deleteBooking,
+      };
     } else {
       throw new AppError(
         httpStatus.BAD_REQUEST,
-        "Booking cannot be deleted unless it is pending."
+        "Booking cannot be deleted unless it is pending or completed."
       );
     }
   } catch (err: any) {
     await session.abortTransaction();
-    await session.endSession();
+    console.error("Error during booking deletion:", err);
     throw new AppError(httpStatus.BAD_REQUEST, "Failed to delete booking!");
+  } finally {
+    await session.endSession(); // Ensure session is closed
   }
 };
 

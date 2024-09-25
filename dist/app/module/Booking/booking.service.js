@@ -26,9 +26,11 @@ const BookingCarFromDB = (payload, user) => __awaiter(void 0, void 0, void 0, fu
     if (!userData) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, " User not found!!");
     }
-    // payload.car = payload.carId;
+    payload.car = payload.carId;
     payload.user = userData._id;
-    const carData = yield car_model_1.Car.findById(payload === null || payload === void 0 ? void 0 : payload.car);
+    // console.log(payload?.carId);
+    const carData = yield car_model_1.Car.findById(payload === null || payload === void 0 ? void 0 : payload.carId);
+    // console.log(carData);
     // check if the car is exists
     if (!carData) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Car not found!!");
@@ -110,12 +112,8 @@ const deleteBookingFromDB = (user, bookingId) => __awaiter(void 0, void 0, void 
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
-        // Check if the user exists
-        const userData = yield user_model_1.User.findOne({ email: user === null || user === void 0 ? void 0 : user.userEmail });
-        if (!userData) {
-            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not found!");
-        }
-        const isCarBooked = yield booking_model_1.Booking.findById(bookingId);
+        // If admin, no need to check user existence
+        const isCarBooked = yield booking_model_1.Booking.findById(bookingId).session(session);
         if (!isCarBooked) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Booking not found!");
         }
@@ -123,24 +121,30 @@ const deleteBookingFromDB = (user, bookingId) => __awaiter(void 0, void 0, void 
         if (isCarBooked.status === "ongoing") {
             throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "You can't delete the booking because it is ongoing.");
         }
-        // Only allow deletion if the booking status is pending
+        // Only allow deletion if the booking status is pending or completed
         if (isCarBooked.status === "pending" ||
             isCarBooked.status === "completed") {
             const deleteBooking = yield booking_model_1.Booking.findOneAndUpdate({ _id: bookingId }, { isDeleted: true }, { new: true, session });
             // Update the car's isBooked status to false
             yield car_model_1.Car.findByIdAndUpdate(isCarBooked.car, { status: "available" }, { new: true, session });
             yield session.commitTransaction();
-            yield session.endSession();
-            return deleteBooking;
+            return {
+                success: true,
+                message: "Booking deleted successfully!",
+                booking: deleteBooking,
+            };
         }
         else {
-            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Booking cannot be deleted unless it is pending.");
+            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Booking cannot be deleted unless it is pending or completed.");
         }
     }
     catch (err) {
         yield session.abortTransaction();
-        yield session.endSession();
+        console.error("Error during booking deletion:", err);
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to delete booking!");
+    }
+    finally {
+        yield session.endSession(); // Ensure session is closed
     }
 });
 const updateBookingStatus = (user, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
