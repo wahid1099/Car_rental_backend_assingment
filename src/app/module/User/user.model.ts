@@ -15,6 +15,7 @@ const userSchema = new Schema<TUser, UserModel>(
     phone: { type: String, required: [true, "Phone number is required"] },
     role: { type: String, enum: ["user", "admin"] },
     image: { type: String },
+    isDeleted: { type: Boolean, default: false }, // Ensure this field exists
 
     // address: { type: String, required: [true, "Adress is required"] },
   },

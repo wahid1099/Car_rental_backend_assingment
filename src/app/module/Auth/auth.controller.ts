@@ -81,9 +81,9 @@ const getMefromDb = catchAsync(async (req, res) => {
 });
 
 const deleteFromDb = catchAsync(async (req, res) => {
-  const { userId } = req.user;
-  // console.log(userId);
-  const result = await AuthService.deleteUserIntoDb(userId);
+  const userIdToDelete = req.params.userId;
+
+  const result = await AuthService.deleteUserIntoDb(userIdToDelete);
   sendResponse(res, {
     success: true,
     statusCode: 200,
@@ -93,7 +93,7 @@ const deleteFromDb = catchAsync(async (req, res) => {
 });
 
 const makeAdmin = catchAsync(async (req, res) => {
-  const { userId } = req.user;
+  const userId = req.params.userId;
   const result = await AuthService.toggleAdminRoleInDb(userId);
   sendResponse(res, {
     success: true,

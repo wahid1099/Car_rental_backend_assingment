@@ -39,6 +39,7 @@ const Auth = (...requiredRole: TUserRole[]) => {
         }
 
         req.user = user;
+
         next();
       }
     );

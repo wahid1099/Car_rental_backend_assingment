@@ -46,7 +46,6 @@ router.delete(
   Auth(USER_ROLE.admin),
   AuthController.deleteFromDb
 );
-
 router.patch(
   "/update-role/:userId",
   Auth(USER_ROLE.admin),
