@@ -26,8 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../error/AppError"));
+const moment_1 = __importDefault(require("moment"));
 const car_model_1 = require("./car.model");
-const user_model_1 = require("../User/user.model");
 const mongoose_1 = __importDefault(require("mongoose"));
 const booking_model_1 = require("../Booking/booking.model");
 const car_utils_1 = require("./car.utils");
@@ -98,18 +98,10 @@ const deleteCarFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
-const returnCarIntoDb = (bookingId, user) => __awaiter(void 0, void 0, void 0, function* () {
+const returnCarIntoDb = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
     try {
-        //   session.startTransaction();
-        const userData = yield user_model_1.User.findOne({ _id: user === null || user === void 0 ? void 0 : user.userId });
-        if (!userData) {
-            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not found!!");
-        }
-        if (userData.role !== "admin") {
-            throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "Unauthorized access");
-        }
         const booking = yield booking_model_1.Booking.findById(bookingId).session(session);
         if (!booking) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Booking Not Found!!");
@@ -118,19 +110,23 @@ const returnCarIntoDb = (bookingId, user) => __awaiter(void 0, void 0, void 0, f
         if (!car) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Car Not Found!!");
         }
+        // Get the current date and time
+        const currentDate = new Date();
+        const dropOffDate = (0, moment_1.default)(currentDate).format("DD-MM-YYYY"); // Format as required (DD-MM-YYYY)
+        const dropTime = (0, moment_1.default)(currentDate).format("HH:mm"); // Format time as 24-hour (HH:mm)
         const { pickUpDate, pickTime } = booking;
         const pricePerHour = car.pricePerHour;
-        const { totalCost, dropOffDate, dropTime } = (0, car_utils_1.calculateTotalPrice)(pickUpDate, pickTime, pricePerHour);
-        // update booking status
+        const { totalCost } = (0, car_utils_1.calculateTotalPrice)(pickUpDate, pickTime, pricePerHour);
+        // Update booking with total cost, dropOffDate, and dropTime
         booking.totalCost = totalCost;
         booking.dropOffDate = dropOffDate;
         booking.dropTime = dropTime;
         booking.status = "completed";
         yield booking.save({ session });
-        // Updating the car status to available
+        // Update car status to available
         car.status = "available";
         yield car.save({ session });
-        // Re-query the booking to populate the car field
+        // Re-query the booking to populate the car and user fields
         const populatedBooking = yield booking_model_1.Booking.findById(bookingId)
             .populate("car")
             .populate("user")

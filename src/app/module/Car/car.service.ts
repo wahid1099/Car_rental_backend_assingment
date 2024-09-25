@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import AppError from "../../error/AppError";
+import moment from "moment";
 
 import { TCar, TSearchCriteria } from "./car.interface";
 import { Car } from "./car.model";
@@ -99,22 +100,11 @@ const deleteCarFromDb = async (id: string) => {
   return result;
 };
 
-const returnCarIntoDb = async (bookingId: string, user: JwtPayload) => {
+const returnCarIntoDb = async (bookingId: string) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    //   session.startTransaction();
-
-    const userData = await User.findOne({ _id: user?.userId });
-    if (!userData) {
-      throw new AppError(httpStatus.NOT_FOUND, "User not found!!");
-    }
-
-    if (userData.role !== "admin") {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
-    }
-
     const booking = await Booking.findById(bookingId).session(session);
     if (!booking) {
       throw new AppError(httpStatus.NOT_FOUND, "Booking Not Found!!");
@@ -125,16 +115,21 @@ const returnCarIntoDb = async (bookingId: string, user: JwtPayload) => {
       throw new AppError(httpStatus.NOT_FOUND, "Car Not Found!!");
     }
 
+    // Get the current date and time
+    const currentDate = new Date();
+    const dropOffDate = moment(currentDate).format("DD-MM-YYYY"); // Format as required (DD-MM-YYYY)
+    const dropTime = moment(currentDate).format("HH:mm"); // Format time as 24-hour (HH:mm)
+
     const { pickUpDate, pickTime } = booking;
     const pricePerHour = car.pricePerHour;
 
-    const { totalCost, dropOffDate, dropTime } = calculateTotalPrice(
+    const { totalCost } = calculateTotalPrice(
       pickUpDate,
       pickTime,
       pricePerHour
     );
 
-    // update booking status
+    // Update booking with total cost, dropOffDate, and dropTime
     booking.totalCost = totalCost;
     booking.dropOffDate = dropOffDate;
     booking.dropTime = dropTime;
@@ -142,17 +137,19 @@ const returnCarIntoDb = async (bookingId: string, user: JwtPayload) => {
 
     await booking.save({ session });
 
-    // Updating the car status to available
+    // Update car status to available
     car.status = "available";
     await car.save({ session });
 
-    // Re-query the booking to populate the car field
+    // Re-query the booking to populate the car and user fields
     const populatedBooking = await Booking.findById(bookingId)
       .populate("car")
       .populate("user")
       .session(session);
+
     await session.commitTransaction();
     session.endSession();
+
     return populatedBooking;
   } catch (error: any) {
     await session.abortTransaction();

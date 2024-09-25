@@ -74,8 +74,8 @@ const delteCar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 
     });
 }));
 const returnCar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { bookingId, endTime } = req.body;
-    const result = yield car_service_1.CarServices.returnCarIntoDb(bookingId, endTime);
+    const { bookingId } = req.body;
+    const result = yield car_service_1.CarServices.returnCarIntoDb(bookingId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
