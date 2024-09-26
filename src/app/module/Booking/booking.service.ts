@@ -7,6 +7,8 @@ import { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 import { paymentGatway } from "../../utils/PaymentGatway";
+const SSLCommerzPayment = require('sslcommerz').SslCommerzPayment
+import config from "../../config";
 
 const BookingCarFromDB = async (
   payload: Record<string, unknown>,
@@ -233,18 +235,49 @@ const completedBooking = async (user: JwtPayload, bookingId: string) => {
   const transactionId = uuidv4();
   // handle payment
   const paymentDetails = {
-    transactionId,
-    customerName: userData?.name,
-    customerEmail: userData?.email,
-    customerPhone: userData?.phone,
-    customerAddress: "Dhaka",
-    totalCost: isCarBooked?.totalCost,
-    bookingId: isCarBooked?._id,
+    total_amount: isCarBooked?.totalCost,
     currency: "BDT",
+    tran_id: transactionId,
+    success_url: `https://car-rental-backend-assingment.vercel.app/api/payments/confirmations?bookingId=${bookingId}&transactionId=${transactionId}&status=successs`,
+    fail_url: `https://car-rental-backend-assingment.vercel.app/api/payments/confirmations?status=failed`,
+    cancel_url: "https://car-rental-bd-frontend-c8rk.vercel.app",
+    // ipn_url: `${config.backend_url}/api/v1/payments/ipn`,
+    shipping_method: "No",
+    product_name: "Car Rental",
+    product_category: "Service",
+    product_profile: "non-physical-goods",
+    cus_name: userData?.name,
+    cus_email: userData?.email,
+    cus_add1: "Dhaka",
+    cus_add2: "Dhaka",
+    cus_city: "Dhaka",
+    cus_state: "Dhaka",
+    cus_postcode: "1000",
+    cus_country: "Bangladesh",
+    cus_phone: userData?.phone,
+    cus_fax: userData?.phone,
+    ship_name: userData?.name,
+    ship_add1: "Dhaka",
+    ship_add2: "Dhaka",
+    ship_city: "Dhaka",
+    ship_state: "Dhaka",
+    ship_postcode: "1000",
+    ship_country: "Bangladesh",
   };
-  const paymentSession = await paymentGatway(paymentDetails);
 
-  return paymentSession;
+  const sslcz = new SSLCommerzPayment(
+    config.store_id,
+    config.store_password,
+    true
+  );
+  const apiResponse = await sslcz.init(paymentDetails);
+
+  // Assuming the API response contains a URL to redirect to
+  if (apiResponse?.GatewayPageURL) {
+    return { paymentUrl: apiResponse.GatewayPageURL };
+  } else {
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to initialize payment!");
+  }
 };
 export const BookingServices = {
   BookingCarFromDB,
