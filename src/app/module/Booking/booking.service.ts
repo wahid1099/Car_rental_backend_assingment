@@ -6,8 +6,8 @@ import { User } from "../User/user.model";
 import { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { paymentGatway } from "../../utils/PaymentGatway";
-const SSLCommerzPayment = require('sslcommerz').SslCommerzPayment
+// import { paymentGatway } from "../../utils/PaymentGatway";
+const SSLCommerzPayment = require("sslcommerz").SslCommerzPayment;
 import config from "../../config";
 
 const BookingCarFromDB = async (

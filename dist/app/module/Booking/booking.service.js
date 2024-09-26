@@ -20,7 +20,9 @@ const booking_model_1 = require("./booking.model");
 const user_model_1 = require("../User/user.model");
 const mongoose_1 = __importDefault(require("mongoose"));
 const uuid_1 = require("uuid");
-const PaymentGatway_1 = require("../../utils/PaymentGatway");
+// import { paymentGatway } from "../../utils/PaymentGatway";
+const SSLCommerzPayment = require("sslcommerz").SslCommerzPayment;
+const config_1 = __importDefault(require("../../config"));
 const BookingCarFromDB = (payload, user) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = yield user_model_1.User.findOne({ email: user.userEmail });
     if (!userData) {
@@ -188,17 +190,44 @@ const completedBooking = (user, bookingId) => __awaiter(void 0, void 0, void 0, 
     const transactionId = (0, uuid_1.v4)();
     // handle payment
     const paymentDetails = {
-        transactionId,
-        customerName: userData === null || userData === void 0 ? void 0 : userData.name,
-        customerEmail: userData === null || userData === void 0 ? void 0 : userData.email,
-        customerPhone: userData === null || userData === void 0 ? void 0 : userData.phone,
-        customerAddress: "Dhaka",
-        totalCost: isCarBooked === null || isCarBooked === void 0 ? void 0 : isCarBooked.totalCost,
-        bookingId: isCarBooked === null || isCarBooked === void 0 ? void 0 : isCarBooked._id,
+        total_amount: isCarBooked === null || isCarBooked === void 0 ? void 0 : isCarBooked.totalCost,
         currency: "BDT",
+        tran_id: transactionId,
+        success_url: `https://car-rental-backend-assingment.vercel.app/api/payments/confirmations?bookingId=${bookingId}&transactionId=${transactionId}&status=successs`,
+        fail_url: `https://car-rental-backend-assingment.vercel.app/api/payments/confirmations?status=failed`,
+        cancel_url: "https://car-rental-bd-frontend-c8rk.vercel.app",
+        // ipn_url: `${config.backend_url}/api/v1/payments/ipn`,
+        shipping_method: "No",
+        product_name: "Car Rental",
+        product_category: "Service",
+        product_profile: "non-physical-goods",
+        cus_name: userData === null || userData === void 0 ? void 0 : userData.name,
+        cus_email: userData === null || userData === void 0 ? void 0 : userData.email,
+        cus_add1: "Dhaka",
+        cus_add2: "Dhaka",
+        cus_city: "Dhaka",
+        cus_state: "Dhaka",
+        cus_postcode: "1000",
+        cus_country: "Bangladesh",
+        cus_phone: userData === null || userData === void 0 ? void 0 : userData.phone,
+        cus_fax: userData === null || userData === void 0 ? void 0 : userData.phone,
+        ship_name: userData === null || userData === void 0 ? void 0 : userData.name,
+        ship_add1: "Dhaka",
+        ship_add2: "Dhaka",
+        ship_city: "Dhaka",
+        ship_state: "Dhaka",
+        ship_postcode: "1000",
+        ship_country: "Bangladesh",
     };
-    const paymentSession = yield (0, PaymentGatway_1.paymentGatway)(paymentDetails);
-    return paymentSession;
+    const sslcz = new SSLCommerzPayment(config_1.default.store_id, config_1.default.store_password, true);
+    const apiResponse = yield sslcz.init(paymentDetails);
+    // Assuming the API response contains a URL to redirect to
+    if (apiResponse === null || apiResponse === void 0 ? void 0 : apiResponse.GatewayPageURL) {
+        return { paymentUrl: apiResponse.GatewayPageURL };
+    }
+    else {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to initialize payment!");
+    }
 });
 exports.BookingServices = {
     BookingCarFromDB,
