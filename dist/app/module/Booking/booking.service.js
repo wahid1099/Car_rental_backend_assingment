@@ -219,7 +219,7 @@ const completedBooking = (user, bookingId) => __awaiter(void 0, void 0, void 0, 
         ship_postcode: "1000",
         ship_country: "Bangladesh",
     };
-    const sslcz = new SSLCommerzPayment(config_1.default.store_id, config_1.default.store_password, true);
+    const sslcz = new SSLCommerzPayment(config_1.default.store_id, config_1.default.store_password, false);
     const apiResponse = yield sslcz.init(paymentDetails);
     // Assuming the API response contains a URL to redirect to
     if (apiResponse === null || apiResponse === void 0 ? void 0 : apiResponse.GatewayPageURL) {
